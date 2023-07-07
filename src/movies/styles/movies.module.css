@@ -1,0 +1,33 @@
+.container{
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.input_search{
+    width: 400px;
+    height: 40px;
+    font-size: 16px;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-bottom: 10px;
+
+}
+
+.movie_grid{
+    display: grid;
+    grid-template-columns: repeat(3,1fr);
+    gap: 20px;
+}
+
+@media(max-width:768px){
+    .movie_grid{
+        grid-template-columns: repeat(2,1fr);
+    }
+}
+@media(max-width:480px){
+    .movie_grid{
+        grid-template-columns: repeat(1,1fr);
+    }
+}

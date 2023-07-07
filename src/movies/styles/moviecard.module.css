@@ -1,0 +1,27 @@
+.movie_card{
+    display: flex;
+    flex-direction: column;
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin: 10px;
+    width: 250px;
+    box-shadow: rgba(0, 0, 0, 0.12) 0px 1px 3px, rgba(0, 0, 0, 0.24) 0px 1px 2px;
+}
+
+.movie_card img{
+    width: 100%;
+    height: auto;
+    margin-bottom: 10px;
+
+}
+
+.movie_details h3{
+    font-size: 18px;
+    font-weight: bold;
+    margin:0
+}
+
+.movie_details p{
+    font-size: 14px;
+    margin: 5px 0;
+}
