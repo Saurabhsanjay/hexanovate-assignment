@@ -1,78 +1,80 @@
-import React, { useEffect, useState } from 'react'
-import axios from 'axios'
-import MovieCard from './MovieCard';
-import styles from './styles/movies.module.css'
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import MovieCard from "./MovieCard";
+import styles from "./styles/movies.module.css";
+
 const Movies = () => {
-    const API_URL =
-      "https://hexanovate-1oc3v5uf6-thephenom1708.vercel.app/api/movies";
+  const API_URL =
+    "https://hexanovate-1oc3v5uf6-thephenom1708.vercel.app/api/movies";
 
-    //states 
-    const[movies,setMovies]=useState([])
-    const[search,setSearch]=useState('')
-    const[filter,setFilter]=useState('all')
-   
+  // States
+  const [movies, setMovies] = useState([]);
+  const [search, setSearch] = useState("");
+  const [filter, setFilter] = useState("all");
 
-    //for fetching the data
-   const fetchMovies=async()=>{
+  // Fetching the data
+  const fetchMovies = async () => {
     try {
-        const res=await axios.get(API_URL)
-        const movieswithlike=res.data.map((el)=>({
-            ...el,
-            liked:false
-        }))
-        console.log(movieswithlike)
-        setMovies(movieswithlike);
-
+      const res = await axios.get(API_URL);
+      const moviesWithLike = res.data.map((el) => ({
+        ...el,
+        liked: false,
+      }));
+      setMovies(moviesWithLike);
     } catch (error) {
-        console.log('Error fetching the data')
+      console.log("Error fetching the data");
     }
-   }
+  };
 
-   //debounce fucntion
-   const debounce=(func,delay)=>{
+  // Debounce function
+  const debounce = (func, delay) => {
     let timeoutId;
-    return function(...args){
-        clearTimeout(timeoutId);
-        timeoutId=setTimeout(()=>{
-            func.apply(this,args)
-        },delay)
+    return function (...args) {
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(() => {
+        func.apply(this, args);
+      }, delay);
+    };
+  };
+
+  // Searching and filtering the movies
+  const filterMovies = (movie) => {
+    const isLiked = movie.liked;
+    const isMatchingSearch = movie.title
+      .toLowerCase()
+      .includes(search.toLowerCase());
+
+    if (filter === "favorites") {
+      return isLiked && isMatchingSearch;
     }
-   }
 
-   //for searching the movies
+    return isMatchingSearch;
+  };
 
-  const filterMovies=(movie)=>{
-    return movie.title.toLowerCase().includes(search.toLowerCase())
-  }
-
-
-    //for rendering the data
-    useEffect(()=>{
+  // Rendering the data
+  useEffect(() => {
     fetchMovies();
-    },[])
+  }, []);
 
-
-    //for toggle the like button
-    const toggleLike=(index)=>{
-        console.log(index,"index")
-       setMovies((prevstate)=>{
-        const updatedMovies=[...prevstate];
-        updatedMovies[index]={
-            ...updatedMovies[index],
-            liked:!updatedMovies[index].liked
-        };
-        console.log(updatedMovies)
-        
-        return updatedMovies;
-       })
-    }
+  
+  // Toggle the like button
+  const toggleLike = (index) => {
+    setMovies((prevState) => {
+      const updatedMovies = [...prevState];
+      updatedMovies[index] = {
+        ...updatedMovies[index],
+        liked: !prevState[index].liked,
+      };
+      return updatedMovies;
+    });
+  };
 
   return (
     <div className={styles.container}>
       <input
         type="search"
         className={styles.input_search}
-        placeholder="search by movie title"
+        placeholder="Search by movie title"
         value={search}
         onChange={(e) => setSearch(e.target.value)}
       />
@@ -85,26 +87,42 @@ const Movies = () => {
             checked={filter === "all"}
             onChange={(e) => setFilter(e.target.value)}
           />
-          AllMovies
+          All Movies
         </label>
         <label htmlFor="">
           <input
             type="radio"
             name="filter"
-            value="favourites"
-            checked={filter === "favourites"}
+            value="favorites"
+            checked={filter === "favorites"}
             onChange={(e) => setFilter(e.target.value)}
           />
-          Favourites
+          Favorites
         </label>
       </div>
       <div className={styles.movie_grid}>
-        {movies.filter(filterMovies).map((movie, i) => (
-          <MovieCard key={i} movie={movie} toggleLike={() => toggleLike(i)} />
-        ))}
+        {filter === "favorites"
+          ? movies
+              .filter((movie) => movie.liked && filterMovies(movie))
+              .map((movie, i) => (
+                <MovieCard
+                  key={i}
+                  movie={movie}
+                  toggleLike={() => toggleLike(i)}
+                />
+              ))
+          : movies
+              .filter(filterMovies)
+              .map((movie, i) => (
+                <MovieCard
+                  key={i}
+                  movie={movie}
+                  toggleLike={() => toggleLike(i)}
+                />
+              ))}
       </div>
     </div>
   );
-}
+};
 
-export default Movies
+export default Movies;
